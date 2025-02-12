@@ -28,7 +28,7 @@ class MPLensImage(object):
         conjugate_points=None,
         kwargs_numerics=None
     ):
-        '''Generate a multi-plane lensed images from source light, lens mass/light, and point source models.
+        """Generate a multi-plane lensed images from source light, lens mass/light, and point source models.
 
         Parameters
         ----------
@@ -57,7 +57,7 @@ class MPLensImage(object):
         kwargs_numerics : dict, optional
             keyword arguments for various numerical settings (see herculens.Numerics.numerics),
             by default None
-        '''
+        """
         self.Grid = grid_class
         self.PSF = psf_class
         self.Noise = noise_class
@@ -144,7 +144,7 @@ class MPLensImage(object):
         k_planes=None,
         return_pixel_scale=False
     ):
-        '''Create the 2D model image from the parameter values.  Note: due to JIT compilation,
+        """Create the 2D model image from the parameter values.  Note: due to JIT compilation,
         the first call to this method will be slower.
 
         Parameters
@@ -183,7 +183,7 @@ class MPLensImage(object):
             The pixel scale (arcsec/pixel) of each source plane, by default False.
             Note: requites and pixelated adaptive source grid to be used and have `return_pixel_scale`
             set to True.
-        '''
+        """
         ra_grid_img, dec_grid_img = self.ImageNumerics.coordinates_evaluate
 
         # pixel grid positions on each mass plane (including the lens plane)
@@ -271,10 +271,10 @@ class MPLensImage(object):
 
     @partial(jax.jit, static_argnums=(0, 3, 4))
     def trace_conjugate_points(self, eta, kwargs_mass, N=1, k_mass=None):
-        '''
+        """
         Helper function that can be used to ray-trace the list of conjugate points
         provided to the class on initialization to their corresponding source planes.
-        '''
+        """
         i = N - 1
         if self.conjugate_points[i] is not None:
             x, y = self.conjugate_points[i].T
@@ -290,14 +290,14 @@ class MPLensImage(object):
             return None
 
     def mask_extent(self, x_grid_src, y_grid_src, npix_src, source_grid_scale):
-        '''Calculate the extent of an arc mask in it's source plane.
+        """Calculate the extent of an arc mask in its source plane.
 
         Parameters
         ----------
         x_grid_src : jax.numpy array
-            x positions of the arc mask in it's source plane
+            x positions of the arc mask in its source plane
         y_grid_src : jax.numpy array
-            y positions of the arc mask in it's source plane
+            y positions of the arc mask in its source plane
         npix_src : int
             Number of pixels in the source plane
         source_grid_scale : float
@@ -315,7 +315,7 @@ class MPLensImage(object):
             square grid that contains the arc mask with the result scaled by `source_grid_scale`.
         extent : list
             The bounds of the adaptive grid
-        '''
+        """
         # create grid encompassed by ray-traced coordinates
         x_left, x_right = x_grid_src.min(), x_grid_src.max()
         y_bottom, y_top = y_grid_src.min(), y_grid_src.max()
@@ -346,7 +346,7 @@ class MPLensImage(object):
         npix_src=100,
         source_grid_scale=1
     ):
-        '''Calculate the extent of all arc mask in each of their source planes.
+        """Calculate the extent of all arc mask in each of their source planes.
 
         Parameters
         ----------
@@ -373,7 +373,7 @@ class MPLensImage(object):
             square grid that contains the arc mask with the result scaled by `source_grid_scale`.
         extent : list
             The bounds of the adaptive grid
-        '''
+        """
         x_adapt = []
         y_adapt = []
         extent_adapt = []
@@ -407,7 +407,7 @@ class MPLensImage(object):
         npix_src=100,
         source_grid_scale=1.0
     ):
-        '''Calculate the adaptive source coordinates give `eta_flat` and `kwargs_mass`.
+        """Calculate the adaptive source coordinates give `eta_flat` and `kwargs_mass`.
 
         Parameters
         ----------
@@ -441,7 +441,7 @@ class MPLensImage(object):
             square grid that contains the arc mask with the result scaled by `source_grid_scale`.
         extent : list
             The bounds of the adaptive grid
-        '''
+        """
         ra_grid_img, dec_grid_img = self.ImageNumerics.coordinates_evaluate
         ra_grid_planes, dec_grid_planes = self.MPMassModel.ray_shooting(
             ra_grid_img,

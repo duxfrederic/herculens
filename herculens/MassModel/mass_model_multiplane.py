@@ -56,7 +56,7 @@ class MPMassModel(object):
 
     @partial(jax.jit, static_argnums=(0, 5, 6))
     def ray_shooting(self, x, y, eta_flat, kwargs, N=None, k=None):
-        '''Maps image to source position (inverse deflection) on each mass plane
+        """Maps image to source position (inverse deflection) on each mass plane
 
         Parameters
         ----------
@@ -88,7 +88,7 @@ class MPMassModel(object):
         y_deflected : jax.numpy array
             y source plane positions on each mass plane (first index of each corresponds to
             mass plane)
-        '''
+        """
         if (N is None) or (N > self.number_mass_planes):
             N = self.number_mass_planes
         if k is None:
@@ -114,15 +114,15 @@ class MPMassModel(object):
         return xs, ys
 
     def _ray_shooting_slice(self, x, y, eta_flat, kwargs):
-        '''Helper function that give *scaler* inputs of x and y give a *vector*
-        output for each mass plane. Used for the vectorization of the `A` method'''
+        """Helper function that give *scaler* inputs of x and y give a *vector*
+        output for each mass plane. Used for the vectorization of the `A` method"""
         return jnp.stack(
             self.ray_shooting(jnp.array([x]), jnp.array([y]), eta_flat, kwargs)
         ).T.squeeze()
 
     def _A_stack(self, x, y, eta_flat, kwargs, kind='auto'):
-        '''Helper function that takes the jacobian of the ray shooting give *scaler*
-        inputs for x and y and returns a 2x2 array.'''
+        """Helper function that takes the jacobian of the ray shooting give *scaler*
+        inputs for x and y and returns a 2x2 array."""
         if kind == 'auto':
             return jnp.stack(
                 jax.jacfwd(
@@ -148,7 +148,7 @@ class MPMassModel(object):
 
     @partial(jax.jit, static_argnums=(0, 5))
     def A(self, x, y, eta_flat, kwargs, kind='auto'):
-        '''
+        """
         Area distortion matrix of the lens mapping.
 
         Parameters
@@ -180,7 +180,7 @@ class MPMassModel(object):
             The area distortion matrix of the lens for each position
             and each mass plane (including the image plane) with shape
             (N+1, *(x.shape), 2, 2) where N is the number of mass planes.
-        '''
+        """
         A_stack_part = partial(
             self._A_stack,
             eta_flat=eta_flat,
@@ -193,7 +193,7 @@ class MPMassModel(object):
         )(x, y), -2, 0)
 
     def inverse_magnification(self, x, y, eta_flat, kwargs, kind='auto'):
-        '''Return the inverse magnification map for each plane of the lens
+        """Return the inverse magnification map for each plane of the lens
         system.
 
         Parameters
@@ -225,12 +225,12 @@ class MPMassModel(object):
             The inverse magnification of the lens for each position
             and each mass plane (including the image plane) with shape
             (N+1, *(x.shape)) where N is the number of mass planes.
-        '''
+        """
         A = self.A(x, y, eta_flat, kwargs, kind=kind)
         return A[..., 0, 0] * A[..., 1, 1] - A[..., 0, 1] * A[..., 1, 0]
 
     def kappa(self, x, y, eta_flat, kwargs, kind='auto'):
-        '''Lensing convergence k = 1/2 laplacian(phi) map for each plane of the lens
+        """Lensing convergence k = 1/2 laplacian(phi) map for each plane of the lens
         system.
 
         Parameters
@@ -261,12 +261,12 @@ class MPMassModel(object):
         jax.numpy array
             The lensing convergence for each position and each mass plane (including the
             image plane) with shape (N+1, *(x.shape)) where N is the number of mass planes.
-        '''
+        """
         A = self.A(x, y, eta_flat, kwargs, kind=kind)
         return 1 - 0.5 * (A[..., 0, 0] + A[..., 1, 1])
 
     def gamma(self, x, y, eta_flat, kwargs, kind='auto'):
-        '''shear computation for each plane of the lens system
+        """shear computation for each plane of the lens system
         g1 = 1/2(d^2phi/dx^2 - d^2phi/dy^2)
         g2 = d^2phi/dxdy
 
@@ -301,7 +301,7 @@ class MPMassModel(object):
         gamma2 : jax.numpy array
             The second shear component for each position and each mass plane (including the
             image plane) with shape (N+1, *(x.shape)) where N is the number of mass planes.
-        '''
+        """
         A = self.A(x, y, eta_flat, kwargs, kind=kind)
         gamma1 = 0.5 * (A[..., 1, 1] - A[..., 0, 0])
         gamma2 = -A[..., 0, 1]

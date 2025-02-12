@@ -145,3 +145,6 @@ notebooks/
 
 # private submodules
 herculens/MassModel/Profiles/glee/
+
+# pycharm IDE
+.idea
