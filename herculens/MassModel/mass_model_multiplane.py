@@ -14,7 +14,7 @@ from herculens.MassModel.mass_model import MassModel
 
 class MPMassModel(object):
     def __init__(self, mp_mass_model_list, **mass_model_kwargs):
-        '''
+        """
         Create a MPMassModel object.
 
         Parameters
@@ -25,8 +25,8 @@ class MPMassModel(object):
             sorted by distance from observer.
         mass_model_kwargs : dictionary for settings related to PIXELATED
             profiles.
-        '''
-        if all([isinstance(mm, str) for mm in mp_mass_model_list]):
+        """
+        if all(isinstance(mm, str) for nn in mp_mass_model_list for mm in nn):
             self.mp_profile_type_list = mp_mass_model_list
             self.mass_models = []
             for mass_plane in self.mp_profile_type_list:
